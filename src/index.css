@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Crypto Dashboard Design System - Dark Glassmorphism Theme */
+
+@layer base {
+  :root {
+    /* Dark crypto theme - always dark */
+    --background: 210 29% 5%;
+    --foreground: 0 0% 98%;
+
+    --card: 210 29% 8%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 210 29% 8%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 33 93% 54%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 231 48% 66%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 20% 15%;
+    --muted-foreground: 210 15% 60%;
+
+    --accent: 231 48% 66%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 210 20% 18%;
+    --input: 210 20% 18%;
+    --ring: 33 93% 54%;
+
+    --radius: 0.75rem;
+
+    /* Custom crypto colors */
+    --bitcoin: 33 93% 54%;
+    --ethereum: 231 48% 66%;
+    --glass: 0 0% 100%;
+    --glass-opacity: 0.06;
+
+    /* Gradients */
+    --gradient-crypto: linear-gradient(135deg, hsl(var(--bitcoin)) 0%, hsl(var(--ethereum)) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(210 29% 8%) 0%, hsl(210 29% 3%) 100%);
+  }
+
+  .dark {
+    --background: 210 29% 5%;
+    --foreground: 0 0% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--bitcoin) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--bitcoin) / 0.5);
+  }
+}
+
+@layer components {
+  /* Glass card effect */
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl;
+  }
+
+  /* Crypto badges */
+  .badge-success {
+    @apply inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium;
+    background: hsl(var(--success) / 0.15);
+    color: hsl(var(--success));
+  }
+
+  .badge-danger {
+    @apply inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium;
+    background: hsl(var(--destructive) / 0.15);
+    color: hsl(var(--destructive));
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: var(--gradient-crypto);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.6s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+}
