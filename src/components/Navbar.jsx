@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { TrendingUp, DollarSign, Newspaper, FileText, Menu, X } from "lucide-react";
+import { TrendingUp, DollarSign, Newspaper, FileText, Menu, X, MessageCircle } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
+
 
 const navItems = [
   { to: "/", label: "Home", icon: TrendingUp },
@@ -10,7 +11,7 @@ const navItems = [
   { to: "/blog/bitcoin-etf", label: "Blog", icon: FileText },
 ];
 
-export default function Navbar() {
+export default function Navbar({onChatClick}) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -46,6 +47,10 @@ export default function Navbar() {
                 </Link>
               );
             })}
+            {/*Chatbot button */}
+            <button onClick={onChatClick} className="ml-2 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-white/5">
+              <MessageCircle className="w-4 h-4" />Chat
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
