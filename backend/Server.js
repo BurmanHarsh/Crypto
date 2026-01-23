@@ -1,53 +1,51 @@
+
 require("dotenv").config();
 const express = require("express");
-const axios = require("axios");
 const cors = require("cors");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
+
 app.use((req, res, next) => {
   console.log("REQ:", req.method, req.url);
   next();
 });
 
+app.use(
+  cors({
+    origin: "http://localhost:5174",
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
-// app.options("*", cors());
 app.use(express.json());
+
 app.get("/ping", (req, res) => {
   res.json({ ok: true });
 });
 
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post("/chat", async (req, res) => {
   console.log("CHAT HIT:", req.body);
 
   const { message } = req.body;
 
-  try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/responses",
-      {
-        model: "gpt-4.1-mini",
-        input: message
-      },
-      {
-        timeout: 15000,
-        headers: {
-          Authorization: `Bearer ${process.env.OPEN_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
+  if (!message) {
+    return res.status(400).json({ error: "message is required" });
+  }
 
-    res.json({ reply: response.data.output_text });
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const result = await model.generateContent(message);
+    const reply = result.response.text();
+
+    res.json({ reply });
   } catch (err) {
-    console.error("OPENAI ERROR:", err.response?.data || err.message);
-    res.status(500).json({ error: "API failed" });
+    console.error("GEMINI ERROR:", err.message || err);
+    res.status(500).json({ error: "Gemini API failed" });
   }
 });
 
