@@ -11,9 +11,13 @@ app.use((req, res, next) => {
   next();
 });
 
+const allowedOrigins = [
+  "http://localhost:5174",
+  "https://crypto-zeta-seven.vercel.app"
+];
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: allowedOrigins,
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -48,5 +52,12 @@ app.post("/chat", async (req, res) => {
     res.status(500).json({ error: "Gemini API failed" });
   }
 });
+
+app.get("/health", (req, res) => res.send("OK"));
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log("Server running on", PORT));
+
+
+
