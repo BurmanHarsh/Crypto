@@ -24,9 +24,16 @@ export default function ChatBot({ open, onClose }) {
     setMsgs((prev) => [...prev, { from: "user", text: userText }]);
 
     try {
-      const res = await axios.post("http://localhost:5000/chat", {
+      // const res = await axios.post("https://crypto-bxby.onrender.com/chat", {
+      //   message: userText,
+      // });
+      const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+      const res = await axios.post(`${API_BASE}/chat`, {
         message: userText,
       });
+
+  
 
       setMsgs((prev) => [...prev, { from: "bot", text: res.data.reply }]);
     } catch (e) {
