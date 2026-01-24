@@ -13,6 +13,7 @@ app.use((req, res, next) => {
 
 const allowedOrigins = [
   "http://localhost:5174",
+  "http://localhost:5173",
   "https://crypto-zeta-seven.vercel.app"
 ];
 app.use(
