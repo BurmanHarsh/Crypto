@@ -2,6 +2,8 @@
 
 A premium, real-time cryptocurrency market dashboard providing live pricing analysis, global market sentiment indexes, and an interactive AI crypto assistant. 
 
+![CryptoTrack Dashboard Preview](./crypto.jpg)
+
 ---
 
 ## ✨ Features
