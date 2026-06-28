@@ -27,3 +27,10 @@ dist-ssr
 # env files
 .env
 backend/.env
+
+api-map.md
+architecture.md
+memory.md
+database-map.md
+dependency-graph.md
+routes.md

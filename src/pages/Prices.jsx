@@ -1,25 +1,18 @@
+import { useCoins } from "../hooks/useCoins";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, ArrowDownRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export default function Prices() {
-  const [coins, setCoins] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: coins = [], isLoading: loading, isError } = useCoins();
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false"
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setCoins(data);
-        }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+    if (isError) {
+      toast.error("Failed to load live price data. API rate limit exceeded.");
+    }
+  }, [isError]);
 
   const filteredCoins = coins.filter(
     (coin) =>

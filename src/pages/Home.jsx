@@ -1,33 +1,25 @@
+import { useCoins } from "../hooks/useCoins";
 import { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown, Activity, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Home() {
-  const [coins, setCoins] = useState([]);
+  const { data: coins = [], isLoading: loading, isError } = useCoins();
   const [sentiment, setSentiment] = useState("Loading...");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h"
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setCoins(data);
-          const bullish = data.filter((c) => c.price_change_percentage_24h > 0).length;
-          const ratio = bullish / data.length;
-          if (ratio > 0.6) setSentiment("Strongly Bullish 🚀");
-          else if (ratio > 0.52) setSentiment("Bullish 📈");
-          else if (ratio < 0.48) setSentiment("Bearish 📉");
-          else setSentiment("Neutral ⚖️");
-        }
-        setLoading(false);
-      })
-      .catch(() => {
-        setSentiment("Unable to load");
-        setLoading(false);
-      });
-  }, []);
+    if (coins && coins.length > 0) {
+      const bullish = coins.filter((c) => c.price_change_percentage_24h > 0).length;
+      const ratio = bullish / coins.length;
+      if (ratio > 0.6) setSentiment("Strongly Bullish 🚀");
+      else if (ratio > 0.52) setSentiment("Bullish 📈");
+      else if (ratio < 0.48) setSentiment("Bearish 📉");
+      else setSentiment("Neutral ⚖️");
+    } else if (isError) {
+      setSentiment("Unable to load");
+      toast.error("Failed to load live market sentiment. API rate limit exceeded.");
+    }
+  }, [coins, isError]);
 
   const sortedByChange = [...coins].sort(
     (a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h

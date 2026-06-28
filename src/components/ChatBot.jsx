@@ -7,40 +7,55 @@ export default function ChatBot({ open, onClose }) {
     { from: "bot", text: "Hi! Ask me anything about crypto." },
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const messagesRef = useRef(null);
 
   useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
-  }, [msgs, open]);
+  }, [msgs, open, loading]);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
     const userText = input;
     setInput("");
+    setLoading(true);
 
     setMsgs((prev) => [...prev, { from: "user", text: userText }]);
 
     try {
-      // const res = await axios.post("https://crypto-bxby.onrender.com/chat", {
-      //   message: userText,
-      // });
-      const API_BASE = import.meta.env.VITE_API_BASE_URL;
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      console.log("API_BASE:", API_BASE);
 
       const res = await axios.post(`${API_BASE}/chat`, {
         message: userText,
       });
 
-  
-
       setMsgs((prev) => [...prev, { from: "bot", text: res.data.reply }]);
     } catch (e) {
+      console.error(e);
+      // Double check failover to local fallback if production URL failed
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      if (API_BASE !== "http://localhost:5000") {
+        try {
+          const res = await axios.post("http://localhost:5000/chat", {
+            message: userText,
+          });
+          setMsgs((prev) => [...prev, { from: "bot", text: res.data.reply }]);
+          setLoading(false);
+          return;
+        } catch (localErr) {
+          console.error(localErr);
+        }
+      }
       setMsgs((prev) => [
         ...prev,
-        { from: "bot", text: "Server error. Check backend terminal." },
+        { from: "bot", text: "Assistant connection offline. Please ensure the local backend server is running on port 5000." },
       ]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,6 +89,13 @@ export default function ChatBot({ open, onClose }) {
               {m.text}
             </div>
           ))}
+          {loading && (
+            <div className="bot typing">
+              <span className="dot"></span>
+              <span className="dot"></span>
+              <span className="dot"></span>
+            </div>
+          )}
         </div>
 
         <div className="chat-input">
@@ -82,8 +104,11 @@ export default function ChatBot({ open, onClose }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleEnter}
             placeholder="Ask about crypto..."
+            disabled={loading}
           />
-          <button onClick={sendMessage}>Send</button>
+          <button onClick={sendMessage} disabled={loading}>
+            {loading ? "..." : "Send"}
+          </button>
         </div>
       </div>
     </>
